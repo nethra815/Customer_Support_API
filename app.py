@@ -2,10 +2,12 @@ import logging
 import time
 from typing import Any
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
-from support_rag import answer_question
+from support_rag import ModelProviderError, answer_question
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -18,6 +20,23 @@ app = FastAPI(
     ),
     version="1.0.0",
 )
+
+
+@app.exception_handler(RequestValidationError)
+async def handle_request_validation_error(
+    request: Request, exc: RequestValidationError
+) -> JSONResponse:
+    """Return a stable client error without echoing submitted request data."""
+    logger.info("Request validation failed for %s", request.url.path)
+    return JSONResponse(
+        status_code=422,
+        content={
+            "detail": (
+                "Invalid request. Provide a non-empty question no longer than "
+                "2000 characters."
+            )
+        },
+    )
 
 
 class AskRequest(BaseModel):
@@ -65,9 +84,14 @@ def ask(request: AskRequest) -> AskResponse:
 
     try:
         answer, sources, relevance_score = answer_question(question)
+    except ModelProviderError as exc:
+        logger.exception("Model provider failed while answering support question")
+        raise HTTPException(
+            status_code=500,
+            detail="Unable to process the question right now. Please try again.",
+        ) from exc
     except Exception as exc:
         logger.exception("Failed to answer support question")
-        # Do not return API keys, environment variables, or internal exception details.
         raise HTTPException(
             status_code=500,
             detail="Unable to process the question right now. Please try again.",
