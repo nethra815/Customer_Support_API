@@ -11,3 +11,4 @@ pypdf
 sentence-transformers
 faiss-cpu
 langgraph
+langchain-huggingface
