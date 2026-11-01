@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0b1220" />
+    <title>VoltKart Support</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="support-card" aria-labelledby="page-title">
+        <header class="hero">
+          <div class="brand-mark" aria-hidden="true">V</div>
+          <div>
+            <p class="eyebrow">VoltKart customer care</p>
+            <h1 id="page-title">How can we help?</h1>
+            <p class="subtitle">
+              Ask about orders, returns, payments, warranty, or your account.
+            </p>
+          </div>
+          <a class="docs-link" href="/docs" target="_blank" rel="noreferrer">API docs</a>
+        </header>
+
+        <div class="suggestions" aria-label="Suggested questions">
+          <button type="button" class="suggestion">How do I request a refund?</button>
+          <button type="button" class="suggestion">Where can I find my tracking link?</button>
+          <button type="button" class="suggestion">My payment was charged twice</button>
+        </div>
+
+        <section id="conversation" class="conversation" aria-live="polite">
+          <div class="message assistant-message">
+            <div class="avatar">V</div>
+            <div class="message-body">
+              <p class="message-label">VoltKart assistant</p>
+              <p>Hi! I can help you find answers from the VoltKart support guide.</p>
+            </div>
+          </div>
+        </section>
+
+        <form id="ask-form" class="ask-form">
+          <label class="sr-only" for="question">Your support question</label>
+          <textarea
+            id="question"
+            name="question"
+            rows="1"
+            maxlength="2000"
+            placeholder="Type your question..."
+            autocomplete="off"
+            required
+          ></textarea>
+          <button id="send-button" type="submit" aria-label="Send question">
+            <span>Send</span>
+            <span aria-hidden="true">↗</span>
+          </button>
+        </form>
+        <p class="disclaimer">
+          Never share your password, one-time code, or full payment-card details.
+        </p>
+      </section>
+    </main>
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>

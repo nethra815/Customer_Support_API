@@ -1,16 +1,21 @@
 import logging
 import time
+from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from support_rag import ModelProviderError, answer_question
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+BASE_DIR = Path(__file__).resolve().parent
+STATIC_DIR = BASE_DIR / "static"
 
 app = FastAPI(
     title="VoltKart Customer Support API",
@@ -20,6 +25,7 @@ app = FastAPI(
     ),
     version="1.0.0",
 )
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 
 @app.exception_handler(RequestValidationError)
@@ -58,13 +64,9 @@ class AskResponse(BaseModel):
 
 
 @app.get("/", tags=["Health"])
-def root() -> dict[str, str]:
-    """Basic service information."""
-    return {
-        "service": "VoltKart Customer Support API",
-        "status": "running",
-        "docs": "/docs",
-    }
+def root() -> FileResponse:
+    """Serve the customer-support web interface."""
+    return FileResponse(STATIC_DIR / "index.html")
 
 
 @app.get("/health", tags=["Health"])

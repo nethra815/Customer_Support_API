@@ -1,0 +1,151 @@
+:root {
+  color-scheme: light;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #172033;
+  background: #eef3f8;
+  --navy: #0b1220;
+  --blue: #2f6fed;
+  --muted: #718096;
+  --line: #e4e9f0;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: radial-gradient(circle at 15% 0%, #dce9ff 0, transparent 34rem), #eef3f8;
+}
+
+button, textarea { font: inherit; }
+button { cursor: pointer; }
+
+.app-shell {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: 28px 16px;
+}
+
+.support-card {
+  width: min(100%, 840px);
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid rgba(228, 233, 240, .9);
+  border-radius: 24px;
+  box-shadow: 0 24px 70px rgba(40, 61, 93, .12);
+}
+
+.hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 30px 34px 26px;
+  color: #fff;
+  background: linear-gradient(130deg, #0b1220, #172b50);
+}
+
+.brand-mark, .avatar {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  color: #fff;
+  font-weight: 800;
+  border-radius: 13px;
+  background: linear-gradient(135deg, #4f8dff, #2456c4);
+}
+
+.eyebrow {
+  margin: 1px 0 5px;
+  color: #a9c5ff;
+  font-size: .73rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+h1 { margin: 0; font-size: clamp(1.7rem, 5vw, 2.45rem); letter-spacing: -.04em; }
+.subtitle { margin: 8px 0 0; color: #becbe0; font-size: .95rem; }
+.docs-link { margin-left: auto; color: #c9d9fb; font-size: .82rem; text-decoration: none; }
+.docs-link:hover { color: #fff; }
+
+.suggestions {
+  display: flex;
+  gap: 9px;
+  padding: 17px 34px 0;
+  overflow-x: auto;
+}
+
+.suggestion {
+  flex: 0 0 auto;
+  padding: 9px 13px;
+  color: #3e5b89;
+  font-size: .78rem;
+  border: 1px solid #dce6f6;
+  border-radius: 999px;
+  background: #f7faff;
+}
+.suggestion:hover { border-color: #9bbaf2; background: #eef5ff; }
+
+.conversation {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-height: 270px;
+  max-height: 48vh;
+  padding: 25px 34px 20px;
+  overflow-y: auto;
+}
+
+.message { display: flex; gap: 12px; align-items: flex-start; }
+.message .avatar { width: 32px; height: 32px; border-radius: 10px; font-size: .82rem; }
+.message-body { max-width: 85%; }
+.message-label { margin: 0 0 4px; color: #7c8aa0; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+.message-body p:last-child { margin: 0; line-height: 1.55; white-space: pre-wrap; }
+.user-message { justify-content: flex-end; }
+.user-message .message-body { padding: 11px 15px; color: #fff; border-radius: 16px 16px 3px 16px; background: var(--blue); }
+.user-message .message-label { display: none; }
+.assistant-message .message-body { padding: 0 14px 0 0; }
+.typing { color: var(--muted); font-style: italic; }
+
+.metadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin-top: 10px;
+  color: #8a96a8;
+  font-size: .72rem;
+}
+.sources { margin: 8px 0 0; padding-left: 17px; color: #66758c; font-size: .75rem; }
+
+.ask-form { display: flex; gap: 10px; padding: 16px 34px 10px; border-top: 1px solid var(--line); }
+textarea {
+  flex: 1;
+  resize: none;
+  max-height: 110px;
+  padding: 13px 15px;
+  color: var(--navy);
+  border: 1px solid #dce3ed;
+  border-radius: 13px;
+  outline: none;
+  background: #f8fafc;
+}
+textarea:focus { border-color: #6d9cf2; box-shadow: 0 0 0 3px rgba(47, 111, 237, .12); }
+#send-button { align-self: stretch; min-width: 86px; color: #fff; font-weight: 700; border: 0; border-radius: 13px; background: var(--blue); }
+#send-button:hover { background: #255ed0; }
+#send-button:disabled { cursor: wait; opacity: .6; }
+.disclaimer { margin: 0; padding: 0 34px 22px; color: #9aa5b5; font-size: .72rem; text-align: center; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+@media (max-width: 600px) {
+  .hero, .conversation { padding-left: 20px; padding-right: 20px; }
+  .suggestions { padding-left: 20px; padding-right: 20px; }
+  .ask-form { padding-left: 20px; padding-right: 20px; }
+  .disclaimer { padding-left: 20px; padding-right: 20px; }
+  .docs-link { display: none; }
+  #send-button { min-width: 62px; }
+  #send-button span:first-child { display: none; }
+}
