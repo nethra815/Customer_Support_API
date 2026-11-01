@@ -8,7 +8,5 @@ langchain-community
 langchain-groq
 langchain-text-splitters
 pypdf
-sentence-transformers
-faiss-cpu
 langgraph
-langchain-huggingface
+scikit-learn

@@ -12,8 +12,7 @@ from groq import Groq
 from langchain_core.documents import Document
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_community.vectorstores import FAISS
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 from langgraph.graph import StateGraph, START, END
 
@@ -28,7 +27,8 @@ KB_FILE = DATA_DIR / "VoltKart_Support_Knowledge_Base.pdf"
 CHUNK_SIZE = 800
 CHUNK_OVERLAP = 100
 TOP_K = 6
-MIN_SIMILARITY = 0.40
+# TF-IDF scores are lower than the old normalized embedding scores.
+MIN_SIMILARITY = 0.08
 MAX_NEW_TOKENS = 350
 MAX_RETRIES = 1
 
@@ -199,7 +199,7 @@ def build_chunks(pages):
 
 
 # --------------------------------------------------
-# 4. Create embeddings and FAISS index once
+# 4. Create a lightweight local retrieval index once
 # --------------------------------------------------
 raw_docs = load_documents()
 chunks = build_chunks(raw_docs)
@@ -207,20 +207,23 @@ chunks = build_chunks(raw_docs)
 if not chunks:
     raise ValueError("No chunks were created from the knowledge base.")
 
-embedding_model = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/all-MiniLM-L6-v2",
-    encode_kwargs={"normalize_embeddings": True},
+vectorizer = TfidfVectorizer(
+    lowercase=True,
+    ngram_range=(1, 2),
+    sublinear_tf=True,
+    max_features=12000,
 )
+chunk_matrix = vectorizer.fit_transform(chunk.page_content for chunk in chunks)
 
-vector_store = FAISS.from_documents(chunks, embedding_model)
-logger.info("FAISS index ready: %d chunks", len(chunks))
+logger.info("TF-IDF index ready: %d chunks, %d features", len(chunks), chunk_matrix.shape[1])
 
 
 def search_with_scores(query, k=TOP_K):
-    """Return documents with approximate cosine similarity, best first."""
-    hits = vector_store.similarity_search_with_score(query, k=k)
-    # With normalized vectors, FAISS L2 distance is converted approximately to cosine similarity.
-    return [(doc, max(-1.0, min(1.0, 1.0 - float(distance) / 2.0))) for doc, distance in hits]
+    """Return documents with cosine similarity from the local TF-IDF index."""
+    query_vector = vectorizer.transform([query])
+    scores = (chunk_matrix @ query_vector.T).toarray().ravel()
+    ranked_indexes = scores.argsort()[::-1][:k]
+    return [(chunks[index], float(scores[index])) for index in ranked_indexes]
 
 
 # --------------------------------------------------
